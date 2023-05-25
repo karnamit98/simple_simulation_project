@@ -2,54 +2,41 @@ import matplotlib.pyplot as plt
 import numpy as np
 import randomcolor
 from Light import Light
+from helpers import *
 
 class LightSection:
     
-    def __init__(self,axes,num_lights,light_radius,audience):
-        self.num_lights = num_lights
-        self.light_radius = light_radius
+    def __init__(self,axes):
+        self.num_lights = NUM_LIGHTS
+        self.light_radius = LIGHT_RADIUS
         self.axes = axes
-        self.audience=audience
-        #Set axes' sizes, from 0 151 with interval of 10
-        x_ticks=np.arange(0, 151, 20)
-        y_ticks=np.arange(0, 5, 4)
-        self.axes.set_xlim(0,150)
-        self.axes.set_xlim(0,4)
-        self.axes.set_xticks(x_ticks)
-        self.axes.set_yticks(y_ticks)
+        self.colors = COLORS
+        
 
         self.lights = []  # Store the lights in a list
 
         #add lights
         self.addLights()
         self.plotLights()
-        
+
+       
 
     def addLights(self):
+        c=0
         for i in range(self.num_lights):
-            x=i*10+10
+            x=i*10+5
             y= 5 
-            # x=i*self.light_radius*2+self.light_radius*2
-            # y = self.light_radius  
-            randColor = randomcolor.RandomColor().generate()[0]
+            color = self.colors[c]
             intensity = round( np.random.uniform(0.5,1) ,2)
-            light = Light([x,y],"down",randColor,self.light_radius, intensity)
-            # light.plotLight(self.axes)
-            self.audience.addLightRay([x,y],randColor)
+            light = Light([x,y],"down",color,self.light_radius, intensity)
             self.lights.append(light)
+            c+=1
 
-        # print(self.lights)
 
 
     def plotLights(self):
-        for i in range(len(self.lights)):
-            self.lights[i].plotLight(self.axes)
-            self.audience.light_rays[i].plotLightRay(self.audience.axes)
-        # for light in self.lights:
-            # light.setAttribute("intensity", np.random.uniform(0.01,1))
-            # light.setAttribute("color", randomcolor.RandomColor().generate()[0])
-           
-            # light.plotLight(self.axes)
+        for light in self.lights:
+           light.plotLight(self.axes)
 
 
     def shiftColors(self):
@@ -57,11 +44,26 @@ class LightSection:
         for light in self.lights:
             temp = light.color
             light.setAttribute("color",prev)
-            # print(temp,prev)
             prev=temp
-            light.plotLight(self.axes)
+            # light.plotLight(self.axes)
             
         
+    def translateLights(self,i):
+        # i between 1 and 15 incl
+        # prev =  self.lights[-1].position
+        count = 1
+        for light in self.lights:
+            temp = light.position
+            newX = temp[0]+1
+            temp[0] = newX if newX<150 else 0
+            light.setAttribute("position",temp)
+            # print(count,i)
+            if(count%3==0):
+                light.setAttribute("intensity", 0.2)
+            if(count%7==0):
+                light.setAttribute("height",np.random.randint(4,9))
+            
+            count += 1
             
 
     def shiftLights(self):

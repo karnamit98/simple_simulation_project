@@ -1,18 +1,17 @@
 from LightSection import LightSection
-from AudienceSection import AudienceSection
+from StageSection import StageSection
+from SmokeMachine import SmokeMachine
 import matplotlib.pyplot as plt
 import matplotlib.pylab as pl
+import numpy as np
 from matplotlib.animation import FuncAnimation
 from platform import system
 import random
-from colors import hex_colors
+from helpers import *
+import itertools
 
 
 
-
-NUM_LIGHTS=14
-LIGHT_RADIUS=4
-COLORS=hex_colors
 
 
 # INTERVAL=10
@@ -63,36 +62,86 @@ def main():
 
 
       
+    #Set light axes' sizes, from 0 151 with interval of 10
+    x_ticks=np.arange(0, 151, 20)
+    y_ticks=np.arange(0, 5, 4)
+    ax1.set_xlim(0,150)
+    ax1.set_xlim(0,4)
+    ax1.set_xticks(x_ticks)
+    ax1.set_yticks(y_ticks)
+    lightSection = LightSection(ax1)
+    x_ticks=np.arange(10, 151, 20)
+    y_ticks=np.arange(0, 101, 10)
+    ax2.set_xlim(0,150)
+    ax2.set_ylim(0,100)
+    ax2.set_xticks(x_ticks)
+    ax2.set_yticks(y_ticks)
+    stageSection = StageSection(ax2,limits=[150,100])
+    
 
-    lightSection = LightSection(ax1,NUM_LIGHTS,LIGHT_RADIUS,COLORS)
-    audienceSection = AudienceSection(ax2,COLORS)
+    smokeMachine1 = SmokeMachine(ax2, position=[0,0], direction=W)
+    smokeMachine2 = SmokeMachine(ax2, position=[150,0], direction=E)
+    smokeMachine3 = SmokeMachine(ax2, position=[0,0], direction=S)
+    smokeMachine4 = SmokeMachine(ax2, position=[100,100], direction=N)
+    
+    smokeMachine1.generateSmokes(200)
+    smokeMachine2.generateSmokes(200)
+    smokeMachine3.generateSmokes(200)
+    smokeMachine4.generateSmokes(200)
+    smokeMachine1.plotSmokes(4)
+    smokeMachine2.plotSmokes(4)
+    smokeMachine3.plotSmokes(4)
+    smokeMachine4.plotSmokes(4)
 
-    xs=[]
-    ys=[]
-
-    def animate(i):
-        plt.cla()  #clears the axes before next frame
-        if i>0 :
-            lightSection.shiftColors()
-            # audienceSection.draw_triangles()
+    def animate(i): 
+        # plt.cla()  #clears the axes before next frame
+        if i>1 :
+            # lightSection.shiftColors()
+            # stageSection.shiftColors()
+            lightSection.translateLights(i)
+            stageSection.translateLightRays(i)
         
-        # plt.plot()
-
-        # xs.append(i+1)
-        # ys.append(random.randint(0,100))
-        # ax2.plot(xs,ys)
-        # ax1.plot()
+        smokeMachine1.moveSmokes()
+        smokeMachine2.moveSmokes()
+        smokeMachine3.moveSmokes()
+        smokeMachine4.moveSmokes()
+        if i%17==0:
+            # print("generating smokes")
+            smokeMachine1.plotSmokes(2)
+            smokeMachine2.plotSmokes(2)
+            smokeMachine3.plotSmokes(2)
+            smokeMachine4.plotSmokes(2)
+        
        
         print(i)
    
     try:
-        anim = FuncAnimation(fig, animate, interval=200, frames=1000,  cache_frame_data=False)
+        anim = FuncAnimation(fig, animate, interval=50,
+                             frames=1000,
+                            #   frames=np.arange(1, 16),  
+                             cache_frame_data=False)
         a=1
     except KeyboardInterrupt:
         exit()
     except Exception as e:
         print("Unable to perform Action",e)
   
+
+    # for i in range(1000):
+    #     print(i)
+    #     lightSection.translateLights(i)
+    #     stageSection.translateLightRays(i)
+    #     smokeMachine.moveSmoke()
+    #     smokeMachine.generateSmokes(10)
+
+    #     # break simulatiom
+    #     # if a == 0:
+    #     #     print("Simulation Ends!")
+    #     #     break
+
+    #     plt.pause(0.2)
+    #     # plt.clf()
+
 
 
     plt.show()
