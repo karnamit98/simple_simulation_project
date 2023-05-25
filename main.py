@@ -5,12 +5,14 @@ import matplotlib.pylab as pl
 from matplotlib.animation import FuncAnimation
 from platform import system
 import random
+from colors import hex_colors
 
 
 
 
 NUM_LIGHTS=14
 LIGHT_RADIUS=4
+COLORS=hex_colors
 
 
 # INTERVAL=10
@@ -30,6 +32,7 @@ def main():
     ax1.set_autoscale_on(False)
     ax2.set_autoscale_on(False)
     pl.gcf().canvas.manager.set_window_title('Spinal Tap ')
+    plt.subplots_adjust(left=0.029, bottom=0.25, right=0.775, top=0.962, wspace=0.171, hspace=0.011)
 
 
 
@@ -61,8 +64,8 @@ def main():
 
       
 
-    lightSection = LightSection(ax1,NUM_LIGHTS,LIGHT_RADIUS)
-    audienceSection = AudienceSection(ax2)
+    lightSection = LightSection(ax1,NUM_LIGHTS,LIGHT_RADIUS,COLORS)
+    audienceSection = AudienceSection(ax2,COLORS)
 
     xs=[]
     ys=[]
@@ -71,12 +74,13 @@ def main():
         plt.cla()  #clears the axes before next frame
         if i>0 :
             lightSection.shiftColors()
+            # audienceSection.draw_triangles()
         
         # plt.plot()
 
-        xs.append(i+1)
-        ys.append(random.randint(0,100))
-        ax2.plot(xs,ys)
+        # xs.append(i+1)
+        # ys.append(random.randint(0,100))
+        # ax2.plot(xs,ys)
         # ax1.plot()
        
         print(i)

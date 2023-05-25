@@ -5,10 +5,11 @@ from Light import Light
 
 class LightSection:
     
-    def __init__(self,axes,num_lights,light_radius):
+    def __init__(self,axes,num_lights,light_radius,audience):
         self.num_lights = num_lights
         self.light_radius = light_radius
         self.axes = axes
+        self.audience=audience
         #Set axes' sizes, from 0 151 with interval of 10
         x_ticks=np.arange(0, 151, 20)
         y_ticks=np.arange(0, 5, 4)
@@ -22,6 +23,7 @@ class LightSection:
         #add lights
         self.addLights()
         self.plotLights()
+        
 
     def addLights(self):
         for i in range(self.num_lights):
@@ -33,17 +35,21 @@ class LightSection:
             intensity = round( np.random.uniform(0.5,1) ,2)
             light = Light([x,y],"down",randColor,self.light_radius, intensity)
             # light.plotLight(self.axes)
+            self.audience.addLightRay([x,y],randColor)
             self.lights.append(light)
 
         # print(self.lights)
 
 
     def plotLights(self):
-        for light in self.lights:
+        for i in range(len(self.lights)):
+            self.lights[i].plotLight(self.axes)
+            self.audience.light_rays[i].plotLightRay(self.audience.axes)
+        # for light in self.lights:
             # light.setAttribute("intensity", np.random.uniform(0.01,1))
             # light.setAttribute("color", randomcolor.RandomColor().generate()[0])
            
-            light.plotLight(self.axes)
+            # light.plotLight(self.axes)
 
 
     def shiftColors(self):
@@ -51,9 +57,11 @@ class LightSection:
         for light in self.lights:
             temp = light.color
             light.setAttribute("color",prev)
-            print(temp,prev)
+            # print(temp,prev)
             prev=temp
             light.plotLight(self.axes)
+            
+        
             
 
     def shiftLights(self):
